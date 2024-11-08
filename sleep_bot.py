@@ -154,7 +154,7 @@ def check_user_level(now_user_level,now_exp):
         user_level = 3
     if now_exp >= 83:
         user_level = 4
-    if now_exp >= 101:
+    if now_exp >= 141:
         user_level = 5
     if now_user_level < user_level:
         return True
