@@ -37,7 +37,7 @@ def load_channel_status(channel_id):
         return ChannelStatus(str_channel_id, existing_data[str_channel_id])
     return None
 
-# ステータスが変更されたら保存する例
+# ステータスが変更されたら保存する
 def update_channel_status(new_channel_id, new_is_active):
     current_status = load_channel_status(new_channel_id)
 

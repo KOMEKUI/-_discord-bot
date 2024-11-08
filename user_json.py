@@ -48,7 +48,7 @@ def load_user_status(user_id):
     # 存在しない場合、user_level=0とmessage_times=0でUserStatusを返す
     return UserStatus(str_user_id, user_level=0, message_times=0)
 
-# ユーザーのレベルやメッセージ数を更新する例
+# ユーザーのレベルやメッセージ数を更新する
 def update_user_status(user_id, new_level=None, add_message_times=0):
     user_status = load_user_status(user_id)
 
