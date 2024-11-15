@@ -19,7 +19,7 @@ load_dotenv(dotenv_path="token.env")
 load_dotenv(dotenv_path="image-url.env")
 
 # Botのトークン
-TOKEN = os.getenv("test_BOT_TOKEN")
+TOKEN = os.getenv("BOT_TOKEN")
 
 async def daily_task():
     while True:
@@ -39,7 +39,7 @@ async def daily_task():
         # 6時になったら実行する処理
         print("6時になりました！タスクを実行します。")
         # 実行したい処理をここに書く
-        await user_json.update_all_user_status(add_message_times=-10)
+        await user_json.update_all_user_status(add_message_times=-5)
 
 # Bot開始時にスラッシュコマンドの同期
 @client.event
