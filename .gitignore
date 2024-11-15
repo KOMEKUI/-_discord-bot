@@ -1,7 +1,3 @@
 channel_status.json
 token.env
 user_status.json
-.vscode/settings.json
-__pycache__/channel_json.cpython-39.pyc
-__pycache__/Gemini_api.cpython-39.pyc
-__pycache__/user_json.cpython-39.pyc
