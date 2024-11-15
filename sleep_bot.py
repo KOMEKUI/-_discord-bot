@@ -142,7 +142,7 @@ async def on_message(message):
                 user_json.update_user_status(this_user_id,new_level=now_user_level)
                 embed = await create_level_embed(message = message)
                 await message.channel.send(embed=embed)
-            if (this_user_status.message_times % 4) == 0:
+            if (this_user_status.message_times % 2) == 0:
                 send_message = Gemini_api.create_message(bot_name = client.user.name, message = original_message, user_level=now_user_level)
                 await message.channel.send(f"<@{this_user_id}>\n{send_message}")
 
