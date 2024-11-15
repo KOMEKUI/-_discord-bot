@@ -56,7 +56,15 @@ def update_user_status(user_id, new_level=None, add_message_times=0):
     if new_level is not None:
         user_status.user_level = new_level
     user_status.message_times += add_message_times
+    if user_status.message_times < 0:
+        user_status.message_times = 0
 
     # データを保存
     save_user_status(user_status)
     print(f"Status for User ID {user_id} updated and saved.")
+
+
+def update_all_user_status(add_message_times=0):
+    existing_data = load_all_user_status()
+    for user_id in existing_data:
+        update_user_status(user_id=user_id, add_message_times = add_message_times)
