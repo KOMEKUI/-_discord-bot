@@ -27,6 +27,7 @@ async def daily_task():
         now = datetime.now()
         # 次の実行予定の6時を計算
         next_run = datetime.combine(now.date(), datetime.min.time()) + timedelta(hours=6)
+        print("定時タスクを実行します。")
         # 現在の時刻が6時を過ぎている場合は、翌日の6時に設定
         if now >= next_run:
             next_run += timedelta(days=1)
@@ -43,6 +44,7 @@ async def daily_task():
 # Bot開始時にスラッシュコマンドの同期
 @client.event
 async def on_ready():
+    client.loop.create_task(daily_task())
     await tree.sync()
     print(f"スラッシュコマンドの同期をしました")
 
@@ -116,15 +118,17 @@ async def on_message(message):
     dt_now = datetime.now()        # 時間を取得
     now_hour = dt_now.hour
 
-    if client.user in message.mentions:     # メンションがbotかどうか
+    this_user_status = user_json.load_user_status(this_user_id)
+    now_user_level = this_user_status.user_level
+    original_message = message.content.replace(f"<@{client.user.id}>", f"@{client.user.name}")
+    if  client.user.name in original_message:     # botが呼ばれたか
+        print("botが呼ばれました。")
         if now_hour > 1 and now_hour < 6:   # 特定の時間かどうか
             user_json.update_user_status(this_user_id,add_message_times=1)  # メッセージをカウント
-            now_user_level = this_user_status.user_level
-            send_message = Gemini_api.create_message(bot_name = client.user.name, message = message.content, user_level=now_user_level)
+            send_message = Gemini_api.create_message(bot_name = client.user.name, message = original_message, user_level=now_user_level)
             await message.channel.send(f"<@{this_user_id}>\n{send_message}")
         else:
-            now_user_level = this_user_status.user_level
-            send_message = Gemini_api.create_message(bot_name = client.user.name, message = message.content, user_level=now_user_level, hour=now_hour)
+            send_message = Gemini_api.create_message(bot_name = client.user.name, message = original_message, user_level=now_user_level, hour=now_hour)
             await message.channel.send(f"<@{this_user_id}>\n{send_message}")
         return
 
@@ -133,15 +137,13 @@ async def on_message(message):
     if status.is_active:
         if now_hour > 1 and now_hour < 6:   # 特定の時間かどうか
             user_json.update_user_status(this_user_id,add_message_times=1)  # メッセージをカウント
-            this_user_status = user_json.load_user_status(this_user_id)
             if check_user_level(this_user_status.user_level,this_user_status.message_times):
                 now_user_level = this_user_status.user_level + 1
                 user_json.update_user_status(this_user_id,new_level=now_user_level)
                 embed = await create_level_embed(message = message)
                 await message.channel.send(embed=embed)
             if (this_user_status.message_times % 4) == 0:
-                now_user_level = this_user_status.user_level
-                send_message = Gemini_api.create_message(bot_name = client.user.name, message = message.content, user_level=now_user_level)
+                send_message = Gemini_api.create_message(bot_name = client.user.name, message = original_message, user_level=now_user_level)
                 await message.channel.send(f"<@{this_user_id}>\n{send_message}")
 
 async def create_level_embed(message=None,interaction=None):
@@ -196,5 +198,5 @@ def check_user_level(now_user_level,now_exp):
         return True
     return False
 
-daily_task()
+
 client.run(TOKEN)
