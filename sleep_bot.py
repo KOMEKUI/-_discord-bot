@@ -119,9 +119,13 @@ async def on_message(message):
     if client.user in message.mentions:     # メンションがbotかどうか
         if now_hour > 1 and now_hour < 6:   # 特定の時間かどうか
             user_json.update_user_status(this_user_id,add_message_times=1)  # メッセージをカウント
-            pass
+            now_user_level = this_user_status.user_level
+            send_message = Gemini_api.create_message(bot_name = client.user.name, message = message.content, user_level=now_user_level)
+            await message.channel.send(f"<@{this_user_id}>\n{send_message}")
         else:
-            pass
+            now_user_level = this_user_status.user_level
+            send_message = Gemini_api.create_message(bot_name = client.user.name, message = message.content, user_level=now_user_level, hour=now_hour)
+            await message.channel.send(f"<@{this_user_id}>\n{send_message}")
         return
 
     status = channel_json.load_channel_status(f"{this_channel_id}")
@@ -137,7 +141,7 @@ async def on_message(message):
                 await message.channel.send(embed=embed)
             if (this_user_status.message_times % 4) == 0:
                 now_user_level = this_user_status.user_level
-                send_message = Gemini_api.create_message(bot_name = client.user.name ,message = message.content ,user_level=now_user_level)
+                send_message = Gemini_api.create_message(bot_name = client.user.name, message = message.content, user_level=now_user_level)
                 await message.channel.send(f"<@{this_user_id}>\n{send_message}")
 
 async def create_level_embed(message=None,interaction=None):
@@ -192,4 +196,5 @@ def check_user_level(now_user_level,now_exp):
         return True
     return False
 
+daily_task()
 client.run(TOKEN)
